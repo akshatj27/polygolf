@@ -8,7 +8,7 @@ import {
   plus1,
   useIndexCalls,
 } from "../../plugins/ops";
-import { renameIdents } from "../../plugins/idents";
+import { defaultIdentGen, renameIdents } from "../../plugins/idents";
 import { evalStaticExpr } from "../../plugins/static";
 import { flipBinaryOps } from "../../plugins/binaryOps";
 import { golfLastPrint } from "../../plugins/print";
@@ -78,7 +78,7 @@ const golfscriptLanguage: Language = {
       ["argv_get", "a="],
     ]),
     addImports,
-    renameIdents(),
+    renameIdents(defaultIdentGen(["n"])),
   ],
   detokenizer: defaultDetokenizer(
     (a, b) =>

@@ -9,7 +9,7 @@ function getIdentMap(
 ): Map<string, string> {
   // First, try mapping as many idents as possible to their preferred versions
   const inputNames = [...getDeclaredIdentifiers(spine.node)];
-  const outputNames = new Set<string>();
+  const outputNames = new Set<string>(identGen.banned);
   const result = new Map<string, string>();
   for (const iv of inputNames) {
     for (const preferred of identGen.preferred(iv)) {
@@ -51,7 +51,7 @@ function getIdentMap(
 }
 
 export function renameIdents(
-  identGen: IdentifierGenerator = defaultIdentGen
+  identGen: IdentifierGenerator = defaultIdentGen()
 ): Plugin {
   return {
     name: "renameIdents(...)",
@@ -70,15 +70,18 @@ export function renameIdents(
   };
 }
 
-const defaultIdentGen = {
-  preferred(original: string) {
-    const lower = original[0].toLowerCase();
-    const upper = original[0].toUpperCase();
-    return [original[0], original[0] === lower ? upper : lower];
-  },
-  short: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-  general: (i: number) => "v" + i.toString(),
-};
+export function defaultIdentGen(banned: string[] = []) {
+  return {
+    banned,
+    preferred(original: string) {
+      const lower = original[0].toLowerCase();
+      const upper = original[0].toUpperCase();
+      return [original[0], original[0] === lower ? upper : lower];
+    },
+    short: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+    general: (i: number) => "v" + i.toString(),
+  };
+}
 
 function defaultShouldAlias(name: string, freq: number): boolean {
   return 3 + name.length + freq < name.length * freq;

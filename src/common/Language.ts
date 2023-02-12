@@ -45,6 +45,7 @@ export type Detokenizer = (tokens: TokenTree) => string;
 export type WhitespaceInsertLogic = (a: string, b: string) => boolean;
 
 export interface IdentifierGenerator {
+  banned: string[];
   preferred: (original: string) => string[];
   short: string[];
   general: (i: number) => string;
